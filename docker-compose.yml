@@ -1,0 +1,16 @@
+services:
+  server:
+    container_name: whatsapp-business-service
+    build:
+      context: ./
+    ports:
+      - 3001:3001
+    environment:
+     - COMMIT_HASH=running_via_docker_compose
+     - HTTP_PORT=3001
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://server:3001/is_alive"]
+      interval: 15s
+      retries: 3
+      start_period: 5s
+      timeout: 3s
