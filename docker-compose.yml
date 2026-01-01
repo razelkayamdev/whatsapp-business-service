@@ -8,6 +8,9 @@ services:
     environment:
      - COMMIT_HASH=running_via_docker_compose
      - HTTP_PORT=3001
+     - WEBHOOK_SUBSCRIPTION_TOKEN=secret-token-passed-back-to-endpoint-by-meta
+     - WHATSAPP_SENDER_PHONE_NUMBER_ID=secret-token-passed-back-to-endpoint-by-meta
+     - WHATSAPP_BUSINESS_API_TOKEN=123456789012345-look-it-up
     healthcheck:
       test: ["CMD", "curl", "-f", "http://server:3001/is_alive"]
       interval: 15s
