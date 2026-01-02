@@ -11,7 +11,7 @@ export type WhatsAppWebhookPayload = {
 	entry: Array<{
 		id: string; // WABA ID
 		changes: Array<{
-			field: "messages";
+			field: "messages" | string; // Webhook fields - the subscribed field name from "Customize use case" configuration for web hooks on meta's dashboards.
 			value: {
 				messaging_product: "whatsapp";
 				metadata: {

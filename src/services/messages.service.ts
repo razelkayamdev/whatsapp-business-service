@@ -80,6 +80,7 @@ export class MessagesService implements Messaging {
 	}
 
 	async detectMessageStatus(payload: WhatsAppWebhookPayload): Promise<void> {
+		logger.info(`detecting status...`);
 		const status = payload.entry
 			?.flatMap(entry => entry.changes ?? [])
 			.find(change => change.field === "messages")
