@@ -4,6 +4,7 @@ type Configuration = {
 	webhookSubscriptionToken: string;
 	whatsappPhoneNumberId: string;
 	whatsappBusinessApiToken: string;
+	metaApplicationSecret: string;
 };
 
 export class Configurator {
@@ -13,7 +14,9 @@ export class Configurator {
 			serverPort: Number(process.env.HTTP_PORT!),
 			webhookSubscriptionToken: process.env.WEBHOOK_SUBSCRIPTION_TOKEN!,
 			whatsappPhoneNumberId: process.env.WHATSAPP_SENDER_PHONE_NUMBER_ID!,
-			whatsappBusinessApiToken: process.env.WHATSAPP_BUSINESS_API_TOKEN!
+			whatsappBusinessApiToken: process.env.WHATSAPP_BUSINESS_API_TOKEN!,
+			metaApplicationSecret: process.env.META_APP_SECRET!
+
 		} satisfies Configuration;
 	}
 }

@@ -42,7 +42,7 @@ export class WebhookController {
 			throw new ServerError(
 				"forbidden",
 				{ payload: {} },
-				403
+				401
 			);
 		}
 	}
@@ -52,13 +52,13 @@ export class WebhookController {
 		try {
 			const payload = body as WhatsAppWebhookPayload;
 
-			if (typeof payload.entry[0].changes[0].value.messages !== "undefined") {
+			if (typeof payload.entry[0]?.changes[0]?.value.messages !== "undefined") {
 				await this.messagesService.autoReplayMessage(payload);
 				logger.info("Handling incoming webhook completed.");
 				return;
 			}
 
-			if (typeof payload.entry[0].changes[0].value.statuses !== "undefined") {
+			if (typeof payload.entry[0]?.changes[0]?.value.statuses !== "undefined") {
 				await this.messagesService.detectMessageStatus(payload);
 				logger.info("Handling incoming webhook completed.");
 				return;

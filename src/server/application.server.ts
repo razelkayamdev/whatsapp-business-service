@@ -5,11 +5,13 @@ import { createIsAliveRoute } from "../routes/is_alive.route";
 import { httpLogger, logger } from "../services/logger.service";
 import { createWebhooksRoute } from "../routes/webhooks.route";
 import { WebhookController } from "../controllers/webhook.controller";
+import { WebhooksMiddleware } from "../middleware/webhooks.middleware";
 
 type Configuration = {
 	port: number;
 	commitHash: string;
 	webhookController: WebhookController;
+	webhooksMiddleware: WebhooksMiddleware;
 };
 
 export class ApplicationServer {
@@ -21,8 +23,9 @@ export class ApplicationServer {
 	constructor(configuration: Configuration) {
 		this.configuration = configuration;
 		this.app = express();
-		this.app.use(express.json());
 		this.setupLogs();
+		this.loadWebhookRoute();
+		this.app.use(express.json());
 		this.loadUnprotectedRouters();
 		this.loadGeneralRoute();
 		this.app.use(this.errorHandler);
@@ -32,19 +35,25 @@ export class ApplicationServer {
 		this.app.use(httpLogger);
 	}
 
+	private loadWebhookRoute() {
+		const webhooksRoute = createWebhooksRoute({
+			webhookController: this.configuration.webhookController,
+			webhooksMiddleware: this.configuration.webhooksMiddleware
+		});
+
+		this.app.use([
+			webhooksRoute
+		]);
+	}
+
 	private loadUnprotectedRouters() {
 
 		const isAliveRoute = createIsAliveRoute({
 			commitHash: this.configuration.commitHash
 		});
 
-		const webhooksRoute = createWebhooksRoute({
-			webhookController: this.configuration.webhookController
-		});
-
 		this.app.use([
-			isAliveRoute,
-			webhooksRoute
+			isAliveRoute
 		]);
 	}
 
@@ -58,8 +67,6 @@ export class ApplicationServer {
 		logger.error(`Encountered an error. code: ${error.code} message: ${error.message} payload: ${JSON.stringify(error.payload)}`);
 		if (error instanceof ServerError) {
 			res.status(error.code).send(error.payload);
-		} else if (error instanceof SyntaxError) {
-			res.status(400).send({ error: "Invalid JSON" });
 		} else {
 			res.status(500).send(`internal server error: ${error.message}`);
 		}
