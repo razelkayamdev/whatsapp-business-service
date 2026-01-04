@@ -42,7 +42,7 @@ export class WebhookController {
 			throw new ServerError(
 				"forbidden",
 				{ payload: {} },
-				403
+				401
 			);
 		}
 	}
